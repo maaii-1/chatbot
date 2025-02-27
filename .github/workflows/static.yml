@@ -55,11 +55,18 @@ jobs:
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
 
+    - name: Check if main.py Exists
+      run: |
+        if [ ! -f main.py ]; then
+          echo "Error: main.py not found in the root directory."
+          exit 1
+        fi
+
     - name: Flet Build Web
       run: |
         echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}, USER: ${GITHUB_REPOSITORY%/*}, PROJECT_BASE_URL: ${GITHUB_REPOSITORY#*/}"
         flutter config --no-analytics
-        flet build web --base-url ${GITHUB_REPOSITORY#*/} --route-url-strategy hash
+        flet build web --base-url ${GITHUB_REPOSITORY#*/} --route-url-strategy hash --module-name main
 
     - name: Upload Artifact
       uses: actions/upload-pages-artifact@v3
@@ -90,3 +97,4 @@ jobs:
         uses: actions/deploy-pages@v4.0.5
         with:
           artifact_name: web-build-artifact
+
